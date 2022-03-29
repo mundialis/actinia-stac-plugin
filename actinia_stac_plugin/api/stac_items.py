@@ -16,7 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-This code shows the transactions valids for STAC collections endpoints
+This code shows the transactions valids for STAC catalogs endpoint
 """
 __author__ = "Carmen Tawalika, Jorge Herrera"
 __copyright__ = "2018-2022 mundialis GmbH & Co. KG"
@@ -25,36 +25,22 @@ __maintainer__ = "__mundialis__"
 
 
 from actinia_core.rest.resource_base import ResourceBase
-from flask import make_response, request
+from flask import make_response
 
 from flask_restful_swagger_2 import swagger
 
-from actinia_stac_plugin.core.stac_collections import (
-    StacCollectionsList,
-    addStacCollection,
-)
+from actinia_stac_plugin.core.stac_items import getStacItem
 
-from actinia_stac_plugin.apidocs import stac_collections_docs
+from actinia_stac_plugin.apidocs import stac_items_docs
 
 
-class StacCollectionList(ResourceBase):
+class StacItems(ResourceBase):
     def __init__(self):
         ResourceBase.__init__(self)
 
-    @swagger.doc(stac_collections_docs.staccollection_get_docs)
-    def get(self):
-        """Get a list of all Collection."""
-        collection_list = StacCollectionsList()
+    @swagger.doc(stac_items_docs.stacitems_get_docs)
+    def get(self, item: str, item_id: str):
+        """Get a list of all instances."""
+        catalog_list = getStacItem(item, item_id)
 
-        return make_response(collection_list, 200)
-
-    @swagger.doc(stac_collections_docs.staccollection_post_docs)
-    def post(self):
-        """
-        Add a new stac to the user collection
-        """
-
-        parameters = request.get_json(force=True)
-        new_stac = addStacCollection(parameters)
-
-        return make_response(new_stac, 200)
+        return make_response(catalog_list, 200)

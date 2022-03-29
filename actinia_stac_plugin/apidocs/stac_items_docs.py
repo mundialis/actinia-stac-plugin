@@ -17,22 +17,25 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-Test code for STAC module api endpoints
+Documentation for STAC module api endpoints
 """
+
 __author__ = "Jorge Herrera"
 __copyright__ = "2018-2022 mundialis GmbH & Co. KG"
 __license__ = "GPLv3"
 
-from flask import Response
-from testsuite import ActiniaTestCase
-from actinia_core.core.common.app import URL_PREFIX
-
-
-class StacEndpointTest(ActiniaTestCase):
-    def test_a_app_instances(self):
-        """Test if app responds"""
-        resp = self.app.get(f"{URL_PREFIX}/stac", headers=self.user_auth_header)
-
-        assert type(resp) is Response
-        assert resp.status_code == 200
-        assert hasattr(resp, "json")
+stacitems_get_docs = {
+    "tags": ["STAC"],
+    "description": "Get an item of STAC result-catalog. "
+    "Minimum required user role: user",
+    "parameters": [
+        {
+            "in": "path",
+            "name": "item_id",
+            "type": "string",
+            "description": "the STAC Item id to be obtained",
+            "required": True,
+        }
+    ],
+    "responses": {"200": {"description": "This response returns a STAC Item"}},
+}

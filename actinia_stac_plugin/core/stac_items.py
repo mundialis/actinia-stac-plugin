@@ -16,7 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-This code shows the functions for STAC instance id endpoint
+This code shows the functions for STAC item endpoint
 """
 __author__ = "Carmen Tawalika, Jorge Herrera"
 __copyright__ = "2018-2022 mundialis GmbH & Co. KG"
@@ -29,29 +29,13 @@ from actinia_stac_plugin.core.stac_redis_interface import redis_actinia_interfac
 from actinia_stac_plugin.core.common import connectRedis
 
 
-def getInstance(stac_instance_id):
+def getStacItem(item: str, item_id: str):
     connectRedis()
-    exist = redis_actinia_interface.exists(stac_instance_id)
+    exist = redis_actinia_interface.exists(item)
 
     if not exist:
-        raise BadRequest("stac instance ID does not match with the instences stored")
+        raise BadRequest("No Item found with the provided parameters")
 
-    return redis_actinia_interface.read(stac_instance_id)
+    item = redis_actinia_interface.read(item)
 
-
-def deleteStacInstance(stac_instance_id):
-    connectRedis()
-    try:
-        instance = redis_actinia_interface.read(stac_instance_id)
-        for i in instance.keys():
-            redis_actinia_interface.delete(i)
-        redis_actinia_interface.delete(stac_instance_id)
-        instances = redis_actinia_interface.read("stac_instances")
-        del instances[stac_instance_id]
-        redis_actinia_interface.update("stac_instances", instances)
-    except Exception:
-        raise BadRequest(
-            "Something went wrong please that the element is well typed "
-            + stac_instance_id
-        )
-    return stac_instance_id
+    return item
